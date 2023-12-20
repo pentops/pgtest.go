@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"testing"
 	"time"
 
 	"github.com/lib/pq"
@@ -58,7 +57,11 @@ func WithDir(dir string) option {
 	}
 }
 
-func GetTestDB(t testing.TB, optionMods ...option) *sql.DB {
+type TB interface {
+	Fatal(...interface{})
+}
+
+func GetTestDB(t TB, optionMods ...option) *sql.DB {
 	options := &options{
 		schemaName: "testing",
 		dir:        "./ext/db",
