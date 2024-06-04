@@ -51,7 +51,15 @@ func WithSchemaName(schemaName string) option {
 	}
 }
 
+// DEPRECATED: Use WithMigrations instead
 func WithDir(dir string) option {
+	return func(o *options) {
+		o.dir = dir
+	}
+}
+
+// WithMigrations runs goose migrations from the given directory
+func WithMigrations(dir string) option {
 	return func(o *options) {
 		o.dir = dir
 	}
@@ -64,7 +72,7 @@ type TB interface {
 func GetTestDB(t TB, optionMods ...option) *sql.DB {
 	options := &options{
 		schemaName: "testing",
-		dir:        "./ext/db",
+		dir:        "",
 	}
 	for _, mod := range optionMods {
 		mod(options)
@@ -82,8 +90,10 @@ func GetTestDB(t TB, optionMods ...option) *sql.DB {
 		t.Fatal(err.Error())
 	}
 
-	if err := migrate(conn, options.dir); err != nil {
-		t.Fatal(err.Error())
+	if options.dir != "" {
+		if err := migrate(conn, options.dir); err != nil {
+			t.Fatal(err.Error())
+		}
 	}
 	return conn
 }
