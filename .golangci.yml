@@ -6,7 +6,7 @@ run:
 linters:
   enable:
     - errcheck
-    - exportloopref
+    - copyloopvar
     - gofmt
     - gosimple
     - govet
